@@ -95,8 +95,8 @@ As principais informações do sistema serão relacionadas a:
 | ------------ | -------------- | ---------------------------------------------------- |
 | Victor Hugo  | Full Stack     | Integração, desenvolvimento e organização do projeto |
 | Miguel Gallo | Front-end      | Interfaces e dashboard                               |
-| Mikael Levi  | Back-end       | API e regras de negócio                              |
-| Luiz Vieira  | Banco de Dados | Estrutura e gerenciamento do banco                   |
+| Rafael Paiutto da Silva  | Front-end | Interfaces e dashboard                        |
+
 
 ## Benefícios esperados
 
