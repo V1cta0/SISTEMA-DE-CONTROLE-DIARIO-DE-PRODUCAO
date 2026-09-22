@@ -121,3 +121,8 @@ O sistema deverá possuir uma interface simples e objetiva, funcionar através d
 **Escola SENAI Ji-Paraná - RO**
 
 **Área de atuação:** Alimentos e Bebidas
+
+
+
+
+Para utilização e testes em BD: https://dbdiagram.io/d
