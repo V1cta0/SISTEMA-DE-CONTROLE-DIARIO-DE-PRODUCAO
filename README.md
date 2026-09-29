@@ -58,7 +58,6 @@ O sistema deve permitir o armazenamento permanente dos registros e facilitar a c
 ### Outros
 
 * BCrypt para armazenamento seguro das senhas
-* Token em memória para autenticação
 * ZXing para leitura de código de barras
 
 ## Estrutura do projeto
