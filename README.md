@@ -12,7 +12,7 @@ do desafio da empresa **CICAL IND. E COM. DE PRODUTOS ALIMENTÍCIOS LTDA**.
 |---|---|---|
 | Victor Hugo | Full Stack | Integração, desenvolvimento e organização do projeto |
 | Miguel Gallo | Front-end | Interfaces e dashboard |
-| Rafael Paiutto da Silva | Front-end | Interfaces e dashboard |
+| Rafael Paiutto da Silva | Front-end | Banco de Dados|
 
 ## Tecnologias
 
