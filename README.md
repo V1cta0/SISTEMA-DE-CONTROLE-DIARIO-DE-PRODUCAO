@@ -47,6 +47,7 @@ cical-java/
     └── documentacao-tecnica.md
 ```
 
+<<<<<<< HEAD
 ## Como executar
 
 ### 1. Banco de dados (MySQL)
@@ -125,3 +126,11 @@ Acesse `http://localhost:5173` no navegador.
 
 Consulte `docs/documentacao-tecnica.md` para detalhes do banco de dados
 e dos endpoints da API.
+=======
+**Área de atuação:** Alimentos e Bebidas
+
+
+
+
+Para utilização e testes em BD: https://dbdiagram.io/d
+>>>>>>> 7a58168994b06799fef080bb3ad812d63e95a077
