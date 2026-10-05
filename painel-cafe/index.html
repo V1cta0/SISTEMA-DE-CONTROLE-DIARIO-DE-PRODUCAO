@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Torra Viva – Produção de café</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <header>
+    <div><h1>Produção de café</h1><p id="sub"></p></div>
+    <button class="btn pri" id="new">Registrar lote</button>
+  </header>
+
+  <section class="card" aria-label="Resumo dos últimos 30 dias">
+    <div class="row"><div class="big num"><span id="total">0</span><small>kg em 30 dias</small></div></div>
+    <div class="strip" id="strip"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="card">
+    <h2>Lotes</h2>
+    <div class="filters">
+      <input id="q" type="search" placeholder="Buscar por lote, origem ou responsável" aria-label="Buscar">
+      <select id="ft" aria-label="Tipo"><option value="">Todos os tipos</option><option value="torrado">Torrado</option><option value="moido">Moído</option><option value="blend">Blend</option></select>
+      <select id="fs" aria-label="Status"><option value="">Todos os status</option><option value="producao">Em produção</option><option value="concluido">Concluído</option><option value="embalado">Embalado</option></select>
+    </div>
+    <div class="tw"><table><thead><tr><th>Lote</th><th>Tipo</th><th>Origem ou composição</th><th>Data</th><th class="r">Saída</th><th class="r">Rendimento</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="empty" id="empty" hidden>Nenhum lote encontrado. Ajuste os filtros ou registre um novo lote.</div>
+  </section>
+</main>
+
+<dialog id="dlgForm"><form method="dialog" id="form">
+  <h2>Registrar lote</h2>
+  <div class="f">
+    <div><label for="fTipo">Tipo</label><select id="fTipo" name="tipo"><option value="torrado">Torrado em grão</option><option value="moido">Moído</option><option value="blend">Blend</option></select></div>
+    <div><label for="fData">Data</label><input id="fData" name="data" type="date" required></div>
+    <div class="w" id="wOrig"><label for="fOrig">Origem ou variedade</label><input id="fOrig" name="origem" placeholder="Ex.: Sul de Minas, Catuaí"></div>
+    <div class="w" id="wComp" hidden><label for="fComp">Composição do blend</label><input id="fComp" name="composicao" placeholder="Ex.: Cerrado 60%, Mogiana 40%"></div>
+    <div><label for="fIn" id="lIn">Café verde usado (kg)</label><input id="fIn" name="entrada" type="number" min="0.1" step="0.1" required></div>
+    <div><label for="fOut">Café produzido (kg)</label><input id="fOut" name="saida" type="number" min="0.1" step="0.1" required></div>
+    <div><label for="fResp">Responsável</label><input id="fResp" name="resp" required></div>
+    <div><label for="fSt">Status</label><select id="fSt" name="status"><option value="producao">Em produção</option><option value="concluido">Concluído</option><option value="embalado">Embalado</option></select></div>
+    <div class="w"><label for="fObs">Observações</label><textarea id="fObs" name="obs" rows="2"></textarea></div>
+  </div>
+  <div class="foot"><button type="button" class="btn" id="cancel">Cancelar</button><button class="btn pri" value="ok">Salvar lote</button></div>
+</form></dialog>
+
+<dialog id="dlgView"><div id="view"></div></dialog>
+<div id="toast" role="status"></div>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

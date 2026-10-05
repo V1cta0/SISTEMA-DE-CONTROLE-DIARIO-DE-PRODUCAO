@@ -1,0 +1,10 @@
+Torra Viva - Painel de producao de cafe
+
+index.html      estrutura da pagina. Abra com dois cliques no navegador.
+css/style.css   todo o visual (cores, layout, tabela, formulario).
+js/api.js       camada de dados: list, create, update, remove, mais os dados de demonstracao.
+js/app.js       interface: resumo, tabela, filtros, formulario e detalhes do lote.
+
+Integracao com backend: edite so o js/api.js. Troque o corpo dos 4 metodos do objeto "api"
+por chamadas fetch('/api/lotes'). O app.js e o restante nao mudam.
+Sem backend, os dados de demonstracao ficam salvos so no navegador.
