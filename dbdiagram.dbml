@@ -1,0 +1,31 @@
+Table usuarios {
+  id bigint [pk, increment]
+  nome varchar(150) [not null]
+  email varchar(150) [not null, unique]
+  senha_hash varchar(255) [not null]
+  tipo_usuario varchar(20) [not null, default: 'operador']
+  ativo boolean [not null, default: true]
+  criado_em datetime [not null, default: `now()`]
+}
+
+Table producoes {
+  id bigint [pk, increment]
+  data date [not null]
+  turno varchar(20) [not null, note: 'Manhã, Tarde ou Noite']
+  produto varchar(50) [not null, note: 'Café Torrado, Café Moído ou Blend']
+  tipo_torra varchar(20) [note: 'Claro, Médio ou Escuro (opcional)']
+  tipo_moagem varchar(20) [note: 'Grossa, Média ou Fina (opcional)']
+  quantidade_kg decimal(10,2) [not null, note: 'maior que zero']
+  codigo_barras varchar(50) [note: 'opcional']
+  observacoes text
+  usuario_id bigint [not null, ref: > usuarios.id]
+  criado_em datetime [not null, default: `now()`]
+  atualizado_em datetime [not null, default: `now()`]
+
+  indexes {
+    data
+    (data, turno)
+    (data, produto)
+    codigo_barras
+  }
+}
