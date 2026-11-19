@@ -438,3 +438,5 @@ tbody tr:last-child td { border-bottom: none; }
 .leitor-aviso { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: 1.5rem; text-align: center; color: var(--creme); font-size: .95rem; }
 .leitor-status { min-height: 1.3em; margin: 0; font-size: .85rem; color: var(--cinza); text-align: center; }
 .leitor-caixa .botao-ler { align-self: center; background: none; font-family: inherit; padding: .6rem 1.2rem; }
+.leitor-camera { display: flex; align-items: center; gap: .6rem; font-size: .85rem; color: var(--cinza); }
+.leitor-camera select { flex: 1; min-width: 0; padding: .45rem .6rem; border: 1px solid #d9c9b3; border-radius: 8px; background: #fff; font-family: inherit; font-size: .9rem; color: inherit; }

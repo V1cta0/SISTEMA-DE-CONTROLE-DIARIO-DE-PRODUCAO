@@ -306,6 +306,7 @@ export default function Cadastro() {
               <li>Se o código já foi registrado antes, produto, torra e moagem vêm preenchidos.</li>
               <li>Depois de salvar, data e turno ficam, e o cursor volta para o código.</li>
               <li>Sem leitor USB: "Câmera ao vivo" lê o código em tempo real (precisa de HTTPS ou localhost) e "Tirar foto" funciona em qualquer endereço.</li>
+              <li>Celular como câmera, sem instalar nada: pelo USB (modo webcam do Android) ele aparece na lista de câmeras da "Câmera ao vivo"; ou abra o site no navegador do celular.</li>
             </ul>
           </div>
 

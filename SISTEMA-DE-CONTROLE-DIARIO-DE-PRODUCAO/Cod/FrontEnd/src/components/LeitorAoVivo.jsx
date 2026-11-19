@@ -14,6 +14,7 @@ import { apiFetchArquivo } from '../api.js'
 const INTERVALO_LEITURA_MS = 700
 const LARGURA_MAXIMA = 960
 const VIGIA_MS = 1500
+const CHAVE_CAMERA = 'cical_camera_id'
 
 export function cameraAoVivoDisponivel() {
   return typeof navigator !== 'undefined' && !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
@@ -35,6 +36,23 @@ function mensagemDeErro(e) {
   }
 }
 
+function lerIdSalvo() {
+  try {
+    return localStorage.getItem(CHAVE_CAMERA) || ''
+  } catch {
+    return ''
+  }
+}
+
+function salvarId(id) {
+  try {
+    if (id) localStorage.setItem(CHAVE_CAMERA, id)
+    else localStorage.removeItem(CHAVE_CAMERA)
+  } catch {
+    // sem armazenamento: só não lembra da escolha
+  }
+}
+
 export default function LeitorAoVivo({ aoLer, aoFechar }) {
   const refVideo = useRef(null)
   const refCanvas = useRef(null)
@@ -47,8 +65,11 @@ export default function LeitorAoVivo({ aoLer, aoFechar }) {
   const refMudo = useRef(null)
   const refReiniciar = useRef(() => {})
   const refDetector = useRef(undefined)
+  const refIdCamera = useRef(lerIdSalvo()) // câmera escolhida na lista ('' = traseira do celular / padrão)
   const [estado, setEstado] = useState('iniciando') // iniciando | ativa | pausada | erro
   const [mensagem, setMensagem] = useState('')
+  const [cameras, setCameras] = useState([])
+  const [idAtual, setIdAtual] = useState('')
 
   const pararCamera = useCallback(() => {
     refGeracao.current += 1
@@ -71,6 +92,21 @@ export default function LeitorAoVivo({ aoLer, aoFechar }) {
     refVigia.current = { tempo: -1, paradoVezes: 0 }
   }, [])
 
+  // Lista as câmeras que o navegador enxerga (webcam, câmera do celular ligada por USB no modo webcam etc.).
+  // Os nomes só aparecem depois que a permissão da câmera foi dada, por isso roda depois de abrir a stream.
+  const atualizarCameras = useCallback(async (stream) => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return
+    try {
+      const todos = await navigator.mediaDevices.enumerateDevices()
+      setCameras(todos.filter((d) => d.kind === 'videoinput'))
+      const faixa = stream && stream.getVideoTracks()[0]
+      const id = faixa && faixa.getSettings ? faixa.getSettings().deviceId : ''
+      if (id) setIdAtual(id)
+    } catch {
+      // sem lista: o leitor continua funcionando com a câmera padrão
+    }
+  }, [])
+
   const iniciarCamera = useCallback(async () => {
     pararCamera()
     const minhaGeracao = refGeracao.current
@@ -85,13 +121,20 @@ export default function LeitorAoVivo({ aoLer, aoFechar }) {
 
     try {
       let stream
+      const idEscolhido = refIdCamera.current
+      const tamanho = { width: { ideal: 1280 }, height: { ideal: 720 } }
+      const restricoes = idEscolhido
+        ? { deviceId: { exact: idEscolhido }, ...tamanho }
+        : { facingMode: { ideal: 'environment' }, ...tamanho }
       try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
-          audio: false
-        })
+        stream = await navigator.mediaDevices.getUserMedia({ video: restricoes, audio: false })
       } catch (e) {
-        if (e && e.name === 'OverconstrainedError') {
+        if (e && (e.name === 'OverconstrainedError' || e.name === 'NotFoundError')) {
+          // a câmera escolhida sumiu (cabo USB solto, por exemplo): volta para a padrão
+          if (idEscolhido) {
+            refIdCamera.current = ''
+            salvarId('')
+          }
           stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
         } else {
           throw e
@@ -127,12 +170,13 @@ export default function LeitorAoVivo({ aoLer, aoFechar }) {
       }
       if (minhaGeracao !== refGeracao.current) return
       setEstado('ativa')
+      atualizarCameras(stream)
     } catch (e) {
       if (minhaGeracao !== refGeracao.current) return
       setEstado('erro')
       setMensagem(mensagemDeErro(e))
     }
-  }, [pararCamera])
+  }, [pararCamera, atualizarCameras])
 
   // guarda a versão mais nova de "reiniciar" para os eventos da faixa usarem
   useEffect(() => {
@@ -170,7 +214,8 @@ export default function LeitorAoVivo({ aoLer, aoFechar }) {
       if (e.persisted && refAberto.current) iniciarCamera()
     }
     function aoTrocarDispositivo() {
-      // câmera conectada/desconectada: se a atual sumiu, a faixa termina e o onended reinicia
+      // câmera conectada/desconectada: atualiza a lista; se a atual sumiu, a faixa termina e o onended reinicia
+      atualizarCameras(refStream.current)
       if (refAberto.current && !refStream.current && document.visibilityState !== 'hidden') iniciarCamera()
     }
     function aoTeclar(e) {
@@ -192,7 +237,7 @@ export default function LeitorAoVivo({ aoLer, aoFechar }) {
         navigator.mediaDevices.removeEventListener('devicechange', aoTrocarDispositivo)
       }
     }
-  }, [iniciarCamera, pararCamera, aoFechar])
+  }, [iniciarCamera, pararCamera, atualizarCameras, aoFechar])
 
   // vigia: se o vídeo parar de andar com a aba visível, reinicia a câmera
   useEffect(() => {
@@ -285,6 +330,12 @@ export default function LeitorAoVivo({ aoLer, aoFechar }) {
     return () => clearInterval(id)
   }, [estado, aoLer])
 
+  function aoEscolherCamera(e) {
+    refIdCamera.current = e.target.value
+    salvarId(e.target.value)
+    iniciarCamera()
+  }
+
   const textoAviso =
     estado === 'iniciando' ? 'Abrindo a câmera...' :
     estado === 'pausada' ? 'Câmera em pausa. Ela volta sozinha quando você retornar ao app.' :
@@ -297,6 +348,17 @@ export default function LeitorAoVivo({ aoLer, aoFechar }) {
           <strong>Aponte para o código de barras</strong>
           <button type="button" className="botao-texto" onClick={aoFechar}>Fechar</button>
         </div>
+
+        {cameras.length > 1 && (
+          <label className="leitor-camera">
+            Câmera
+            <select value={idAtual} onChange={aoEscolherCamera}>
+              {cameras.map((c, i) => (
+                <option key={c.deviceId || i} value={c.deviceId}>{c.label || `Câmera ${i + 1}`}</option>
+              ))}
+            </select>
+          </label>
+        )}
 
         <div className="leitor-video">
           <video ref={refVideo} playsInline muted autoPlay />
