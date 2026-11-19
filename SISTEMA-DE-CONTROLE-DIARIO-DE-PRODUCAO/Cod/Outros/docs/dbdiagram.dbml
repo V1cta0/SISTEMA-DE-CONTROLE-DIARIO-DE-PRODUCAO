@@ -1,0 +1,25 @@
+// Sistema de Controle Diario de Producao - CICAL
+// Como usar: va em https://dbdiagram.io/d, crie um novo diagrama e cole
+// este conteudo (Import > DBML) para visualizar e testar o modelo.
+
+Table usuarios {
+  id bigint [pk, increment]
+  nome varchar(150) [not null]
+  email varchar(150) [not null, unique]
+  senha_hash varchar(255) [not null]
+  tipo_usuario varchar(20) [not null, default: 'operador', note: 'administrador ou operador']
+}
+
+Table producoes {
+  id bigint [pk, increment]
+  data date [not null]
+  turno varchar(20) [not null, note: 'Manha, Tarde ou Noite']
+  produto varchar(50) [not null, note: 'Cafe Torrado, Cafe Moido ou Blend']
+  tipo_torra varchar(20) [note: 'Claro, Medio ou Escuro - opcional']
+  tipo_moagem varchar(20) [note: 'Grossa, Media ou Fina - opcional']
+  quantidade_kg double [not null]
+  codigo_barras varchar(50) [note: 'lido pela camera do celular, opcional']
+  observacoes text
+  usuario_id bigint [not null, ref: > usuarios.id]
+  criado_em datetime [not null, default: `now()`]
+}
